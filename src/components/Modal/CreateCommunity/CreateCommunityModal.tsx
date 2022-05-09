@@ -1,5 +1,5 @@
 import { Box, Button, Divider, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, Stack, Checkbox, Flex, Icon } from "@chakra-ui/react"
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore"
+import { doc, runTransaction, serverTimestamp } from "firebase/firestore"
 import { ChangeEvent, useState } from "react"
 import { BsFillEyeFill, BsFillPersonFill } from 'react-icons/bs'
 import { HiLockClosed } from 'react-icons/hi'
@@ -41,22 +41,29 @@ function CreateCommunityModal({ open, handleClose }: CreateCommunityModalProps) 
         setLoading(true)
 
         try {
+            // Create community document and communitySnippet subcollection document on user
+            const communityDocRef = doc(firestore, "communities", communityName);
+            await runTransaction(firestore, async (transaction) => {
+                const communityDoc = await transaction.get(communityDocRef);
+                if (communityDoc.exists()) {
+                    throw new Error(`Sorry, /r${name} is taken. Try another.`);
+                }
 
-            const communityDocRef = doc(firestore, 'communities', communityName)
-            //Check if community exists in db
-            const communityDoc = await getDoc(communityDocRef)
+                transaction.set(communityDocRef, {
+                    creatorId: user?.uid,
+                    createdAt: serverTimestamp(),
+                    numberOfMembers: 1,
+                    privacyType: "public",
+                });
 
-            if (communityDoc.exists()) {
-                throw new Error(`Sorry, ${communityName} is taken, Try another.`)
-            }
-
-            //Create Community
-            await setDoc(communityDocRef, {
-                creatorId: user?.uid,
-                creatorAt: serverTimestamp(),
-                numberOfMembers: 1,
-                privacyType: communityType,
-            })
+                transaction.set(
+                    doc(firestore, `users/${user?.uid}/communitySnippets`, communityName),
+                    {
+                        communityId: communityName,
+                        isModerator: true,
+                    }
+                );
+            });
         } catch (error: any) {
             console.log('handleCreateCommunity error', error)
             setError(error.message)
