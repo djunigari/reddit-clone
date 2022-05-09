@@ -1,9 +1,11 @@
 import { Button, Flex, Input, Text } from '@chakra-ui/react'
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { User } from 'firebase/auth'
+import { addDoc, collection } from 'firebase/firestore'
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth'
 import { useSetRecoilState } from 'recoil'
 import { authModalState } from '../../../atoms/authModal'
-import { auth } from '../../../firebase/clientApp'
+import { auth, firestore } from '../../../firebase/clientApp'
 import { FIREBASE_ERRORS } from '../../../firebase/errors'
 
 function SignUp() {
@@ -16,7 +18,7 @@ function SignUp() {
     const [error, setError] = useState('')
     const [
         createUserWithEmailAndPassword,
-        user,
+        userCred,
         loading,
         userError,
     ] = useCreateUserWithEmailAndPassword(auth);
@@ -36,6 +38,17 @@ function SignUp() {
             [event.target.name]: event.target.value
         }))
     }
+    //Copy the logic of firebase functions 
+    const createUserDocument = async (user: User) => {
+        await addDoc(collection(firestore, 'users'), JSON.parse(JSON.stringify(user)))
+    }
+    //Copy the logic of firebase functions 
+    useEffect(() => {
+        if (userCred) {
+            createUserDocument(userCred.user)
+        }
+    }, [userCred])
+
     return (
         <form onSubmit={onSubmit}>
             <Input
