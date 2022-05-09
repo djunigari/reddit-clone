@@ -3,6 +3,9 @@ import { GetServerSidePropsContext } from "next"
 import { Community } from "../../../atoms/communitiesAtom"
 import { firestore } from "../../../firebase/clientApp"
 import safeJsonStringify from 'safe-json-stringify'
+import CommunityNotFound from "../../../components/Community/NotFound"
+import Header from "../../../components/Community/Header"
+import PageContent from "../../../components/Layout/PageContent"
 
 interface CommunityPageProps {
     communityData: Community
@@ -10,8 +13,21 @@ interface CommunityPageProps {
 }
 
 function CommunityPage({ communityData }: CommunityPageProps) {
+    if (!communityData) {
+        return <CommunityNotFound />
+    }
     return (
-        <div>Welcome to {communityData.id}</div>
+        <>
+            <Header communityData={communityData} />
+            <PageContent>
+                <>
+                    <div>LHS</div>
+                </>
+                <>
+                    <div>RHS</div>
+                </>
+            </PageContent>
+        </>
     )
 }
 
@@ -20,13 +36,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     try {
         const communityDocRef = doc(firestore, 'communities', context.query.communityId as string)
         const communityDoc = await getDoc(communityDocRef)
+
         return {
             props: {
-                communityData: JSON.parse(safeJsonStringify(
-                    {
-                        id: communityDoc.id,
-                        ...communityDoc.data()
-                    }))
+                communityData: communityDoc.exists() ?
+                    JSON.parse(
+                        safeJsonStringify(
+                            {
+                                id: communityDoc.id,
+                                ...communityDoc.data()
+                            })
+                    ) : ''
             }
         }
     } catch (error) {
