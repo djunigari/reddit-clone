@@ -7,6 +7,7 @@ import CommunityNotFound from "../../../components/Community/NotFound"
 import Header from "../../../components/Community/Header"
 import PageContent from "../../../components/Layout/PageContent"
 import CreatePostLink from "../../../components/Community/CreatePostLink"
+import Posts from "../../../components/Posts/Posts"
 
 interface CommunityPageProps {
     communityData: Community
@@ -23,6 +24,7 @@ function CommunityPage({ communityData }: CommunityPageProps) {
             <PageContent>
                 <>
                     <CreatePostLink />
+                    <Posts communityData={communityData} />
                 </>
                 <>
                     <div>RHS</div>

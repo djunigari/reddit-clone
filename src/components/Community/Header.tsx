@@ -19,7 +19,7 @@ function Header({ communityData }: HeaderProps) {
         >
             <Box height='50%' bg='blue.400' />
             <Flex justify='center' bg='white' flexGrow={1}>
-                <Flex width='95%' maxWidth='860px' border='1px solid red'>
+                <Flex width='95%' maxWidth='860px'>
                     {communityData.imageUrl ? (
                         <Image />
                     ) : (

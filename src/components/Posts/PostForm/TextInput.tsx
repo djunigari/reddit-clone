@@ -52,7 +52,7 @@ function TextInput({ textInputs, onChange, handleCreatePost, loading }: TextInpu
                     padding='0px 30px'
                     disabled={!textInputs.title}
                     isLoading={loading}
-                    onClick={() => { }}
+                    onClick={handleCreatePost}
                 >
                     Post
                 </Button>
