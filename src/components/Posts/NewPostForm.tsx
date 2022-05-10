@@ -87,14 +87,13 @@ function NewPostForm({ user }: NewPostFormProps) {
                     imageUrl: downloadUrl
                 })
             }
-
+            //redirect the user back to the communityPage using the router
+            router.back()
         } catch (error: any) {
             console.log('handleCreatePost error', error.message)
             setError(true)
         }
         setLoading(false)
-        //redirect the user back to the communityPage using the router
-        // router.back()
     }
 
     const onSelectImage = (event: ChangeEvent<HTMLInputElement>) => {

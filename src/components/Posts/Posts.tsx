@@ -7,6 +7,7 @@ import usePosts from "../../hooks/usePosts"
 import PostItem from "./PostItem"
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { Stack } from "@chakra-ui/react"
+import PostLoader from "./PostLoader"
 
 interface PostsProps {
     communityData: Community
@@ -19,6 +20,7 @@ function Posts({ communityData }: PostsProps) {
 
     const getPosts = async () => {
         try {
+            setLoading(true)
             //get posts for this community
             const postsQuery = query(
                 collection(firestore, 'posts'),
@@ -43,24 +45,32 @@ function Posts({ communityData }: PostsProps) {
         } catch (error: any) {
             console.log('getPosts error', error.message)
         }
+        setLoading(false)
     }
 
     useEffect(() => {
         getPosts()
     }, [])
     return (
-        <Stack>
-            {postStateValue.posts.map(item => (
-                <PostItem
-                    post={item}
-                    userIsCreator={user?.uid === item.creatorId}
-                    userVoteValue={undefined}
-                    onVote={onVote}
-                    onSelectPost={onSelectPost}
-                    onDeletePost={onDeletePost}
-                />
-            ))}
-        </Stack>
+        <>
+            {loading ? (
+                <PostLoader />
+            ) : (
+                <Stack>
+                    {postStateValue.posts.map(item => (
+                        <PostItem
+                            key={item.id}
+                            post={item}
+                            userIsCreator={user?.uid === item.creatorId}
+                            userVoteValue={undefined}
+                            onVote={onVote}
+                            onSelectPost={onSelectPost}
+                            onDeletePost={onDeletePost}
+                        />
+                    ))}
+                </Stack>
+            )}
+        </>
     )
 }
 
