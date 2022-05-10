@@ -132,7 +132,7 @@ function CreateCommunityModal({ open, handleClose }: CreateCommunityModalProps) 
                                                 Private
                                             </Text>
                                             <Text fontSize='8pt' color='gray.500'>
-                                                Only approved users can view and submmit to this community
+                                                Only approved users can view and submit to this community
                                             </Text>
                                         </Flex>
                                     </Checkbox>
