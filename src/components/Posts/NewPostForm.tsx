@@ -7,6 +7,7 @@ import TabItem from './TabItem'
 import { ChangeEvent, useState } from 'react'
 import { async } from '@firebase/util'
 import TextInput from './PostForm/TextInput'
+import ImageUpload from './PostForm/ImageUpload'
 
 const formTabs: TabItem[] = [
     {
@@ -47,7 +48,18 @@ function NewPostForm() {
 
     const handleCreatePost = async () => { }
 
-    const onSelectImage = () => { }
+    const onSelectImage = (event: ChangeEvent<HTMLInputElement>) => {
+        const reader = new FileReader()
+        if (event.target.files?.[0]) {
+            reader.readAsDataURL(event.target.files[0])
+        }
+
+        reader.onload = (readerEvent) => {
+            if (readerEvent.target?.result) {
+                setSelectedFile(readerEvent.target.result as string)
+            }
+        }
+    }
 
     const onTextChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { target: { name, value } } = event
@@ -62,7 +74,12 @@ function NewPostForm() {
             <Flex width='100'>
                 {formTabs.map(item => (
                     <>
-                        <TabItem item={item} selected={item.title === selectedTab} setSelectedTab={setSelectedTab} />
+                        <TabItem
+                            key={item.title}
+                            item={item}
+                            selected={item.title === selectedTab}
+                            setSelectedTab={setSelectedTab}
+                        />
                     </>
                 ))}
             </Flex>
@@ -75,7 +92,14 @@ function NewPostForm() {
                         loading={loading}
                     />
                 )}
-
+                {selectedTab === 'Images & Video' && (
+                    <ImageUpload
+                        selectedFile={selectedFile}
+                        onSelectImage={onSelectImage}
+                        setSelectedTab={setSelectedTab}
+                        setSelectedFile={setSelectedFile}
+                    />
+                )}
             </Flex>
         </Flex>
     )
