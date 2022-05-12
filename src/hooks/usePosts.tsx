@@ -1,16 +1,25 @@
-import { collection, deleteDoc, doc, writeBatch } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDocs, query, where, writeBatch } from 'firebase/firestore'
 import { deleteObject, ref } from 'firebase/storage'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { Post, postState, PostVote } from '../atoms/postsAtom'
 import { auth, firestore, storage } from '../firebase/clientApp'
 import { useAuthState } from 'react-firebase-hooks/auth'
+import { useEffect } from 'react'
+import { communityState } from '../atoms/communitiesAtom'
+import { authModalState } from '../atoms/authModal'
 
 function usePosts() {
     const [user] = useAuthState(auth)
     const [postStateValue, setPostStateValue] = useRecoilState(postState)
+    const currentCommunity = useRecoilValue(communityState).currentCommunity
+    const setAuthModelState = useSetRecoilState(authModalState)
 
     const onVote = async (post: Post, vote: number, communityId: string) => {
         // Check for user = if not, open auth model
+        if (!user?.uid) {
+            setAuthModelState({ open: true, view: 'login' })
+            return
+        }
         try {
             const { voteStatus } = post
             const existingVote = postStateValue.postVotes.find(vote => vote.postId === post.id)
@@ -57,7 +66,7 @@ function usePosts() {
                     // Delete the postVote document
                     batch.delete(postVoteRef)
 
-                    voteChange += -1
+                    voteChange *= -1
                     //Flipping their vote (up => down OR down => up)
                 } else {
                     // add/Subtract 2 to/from post.voteStatus
@@ -72,15 +81,10 @@ function usePosts() {
                     batch.update(postVoteRef, {
                         voteValue: vote
                     })
+                    voteChange = 2 * vote
                 }
             }
-            // update or post document
-            const postRef = doc(firestore, 'posts', post.id!)
-            batch.update(postRef, {
-                voteStatus: vote + voteChange
-            })
 
-            await batch.commit()
             //update state with updated values
             const postIdx = postStateValue.posts.findIndex(item => item.id === post.id)
             updatePosts[postIdx] = updatePost
@@ -89,6 +93,14 @@ function usePosts() {
                 posts: updatePosts,
                 postVotes: updatePostsVotes,
             }))
+
+            // update or post document
+            const postRef = doc(firestore, 'posts', post.id!)
+            batch.update(postRef, {
+                voteStatus: voteStatus + voteChange
+            })
+
+            await batch.commit()
         } catch (error: any) {
             console.log('onVote error', error.message)
         }
@@ -118,6 +130,39 @@ function usePosts() {
         }
     }
 
+    const getCommunityVotes = async (communityId: string) => {
+        const postVotesQuery = query(
+            collection(firestore, 'users', `${user?.uid}/postVotes`),
+            where('communityId', '==', communityId)
+        )
+
+        const postVoteDocs = await getDocs(postVotesQuery)
+        const postVotes = postVoteDocs.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }))
+
+        setPostStateValue(prev => ({
+            ...prev,
+            postVotes: postVotes as PostVote[]
+        }))
+    }
+
+    useEffect(() => {
+        if (!user || !currentCommunity?.id) return
+        getCommunityVotes(currentCommunity?.id)
+    }, [currentCommunity, user])
+
+
+    useEffect(() => {
+        if (!user) {
+            //clear user post votes
+            setPostStateValue(prev => ({
+                ...prev,
+                postVotes: []
+            }))
+        }
+    }, [user])
     return {
         postStateValue,
         setPostStateValue,

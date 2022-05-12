@@ -16,14 +16,12 @@ interface UserMenuProps {
 }
 
 function UserMenu({ user }: UserMenuProps) {
-    const resetCommunityState = useResetRecoilState(communityState)
     const setAuthModalState = useSetRecoilState(authModalState)
 
     const logout = async () => {
         await signOut(auth)
-        //clear community state
-        resetCommunityState()
     }
+
     return (
         <Menu>
             <MenuButton
