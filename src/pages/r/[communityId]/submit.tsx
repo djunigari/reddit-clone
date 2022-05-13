@@ -4,8 +4,6 @@ import PageContent from '../../../components/Layout/PageContent'
 import NewPostForm from '../../../components/Posts/NewPostForm'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../../../firebase/clientApp'
-import { useRecoilValue } from 'recoil'
-import { communityState } from '../../../atoms/communitiesAtom'
 import About from '../../../components/Community/About'
 import useCommunityData from '../../../hooks/useCommunityData'
 

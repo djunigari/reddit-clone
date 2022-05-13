@@ -9,6 +9,8 @@ import { doc, getDoc } from "firebase/firestore"
 import { Post } from "../../../../atoms/postsAtom"
 import About from "../../../../components/Community/About"
 import useCommunityData from "../../../../hooks/useCommunityData"
+import Comments from "../../../../components/Navbar/Comments/Comments"
+import { User } from "firebase/auth"
 
 function PostPage() {
     const { postStateValue, setPostStateValue, onDeletePost, onVote } = usePosts()
@@ -52,7 +54,7 @@ function PostPage() {
                         userIsCreator={user?.uid === postStateValue.selectedPost?.creatorId}
                     />
                 )}
-
+                <Comments user={user as User} selectedPost={postStateValue.selectedPost} communityId={postStateValue.selectedPost?.communityId as string} />
             </>
             <>
                 {communityStateValue.currentCommunity && (
