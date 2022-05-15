@@ -7,11 +7,13 @@ import { useSetRecoilState } from "recoil"
 import { authModalState } from "../../atoms/authModal"
 import { BsLink45Deg } from 'react-icons/bs'
 import { IoImageOutline } from 'react-icons/io5'
+import useDirectory from "../../hooks/useDirectory"
 
 function CreatePostLink() {
     const router = useRouter()
     const [user] = useAuthState(auth)
     const setAuthModalState = useSetRecoilState(authModalState)
+    const { toogleMenuOpen } = useDirectory()
 
     const onClick = () => {
         if (!user) {
@@ -23,7 +25,10 @@ function CreatePostLink() {
         }
 
         const { communityId } = router.query
-        router.push(`/r/${communityId}/submit`)
+        if (communityId) {
+            router.push(`/r/${communityId}/submit`)
+        }
+        toogleMenuOpen()
     }
 
     return (
