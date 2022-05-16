@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { Post, postState, PostVote } from '../atoms/postsAtom'
 import { auth, firestore, storage } from '../firebase/clientApp'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { MouseEvent, useEffect } from 'react'
+import { useEffect } from 'react'
 import { communityState } from '../atoms/communitiesAtom'
 import { authModalState } from '../atoms/authModal'
 import { useRouter } from 'next/router'
@@ -16,7 +16,7 @@ function usePosts() {
     const currentCommunity = useRecoilValue(communityState).currentCommunity
     const setAuthModelState = useSetRecoilState(authModalState)
 
-    const onVote = async (event: MouseEvent<SVGElement, MouseEvent>, post: Post, vote: number, communityId: string) => {
+    const onVote = async (event: React.MouseEvent<SVGElement, MouseEvent>, post: Post, vote: number, communityId: string) => {
         event.stopPropagation()
 
         // Check for user = if not, open auth model
