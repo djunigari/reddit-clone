@@ -16,7 +16,7 @@ function usePosts() {
     const currentCommunity = useRecoilValue(communityState).currentCommunity
     const setAuthModelState = useSetRecoilState(authModalState)
 
-    const onVote = async (event: MouseEvent<SVGAElement, MouseEvent>, post: Post, vote: number, communityId: string) => {
+    const onVote = async (event: MouseEvent<SVGElement, MouseEvent>, post: Post, vote: number, communityId: string) => {
         event.stopPropagation()
 
         // Check for user = if not, open auth model

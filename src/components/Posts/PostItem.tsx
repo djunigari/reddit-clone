@@ -21,7 +21,7 @@ interface PostItemProps {
     post: Post
     userIsCreator: boolean
     userVoteValue?: number
-    onVote: (event: React.MouseEvent<SVGElement, MouseEvent>, post: Post, vote: number, communityId: string) => {}
+    onVote: (event: React.MouseEvent<SVGElement, MouseEvent>, post: Post, vote: number, communityId: string) => void
     onDeletePost: (post: Post) => Promise<boolean>
     onSelectPost?: (post: Post) => void
     homePage?: boolean
