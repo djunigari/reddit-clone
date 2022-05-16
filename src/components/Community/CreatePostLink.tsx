@@ -27,6 +27,7 @@ function CreatePostLink() {
         const { communityId } = router.query
         if (communityId) {
             router.push(`/r/${communityId}/submit`)
+            return
         }
         toogleMenuOpen()
     }

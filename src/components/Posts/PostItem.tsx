@@ -14,6 +14,7 @@ import { Alert, AlertIcon, Flex, Icon, Image, Skeleton, Spinner, Stack, Text } f
 import moment from "moment";
 import { MouseEvent, useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 
 interface PostItemProps {
@@ -23,9 +24,10 @@ interface PostItemProps {
     onVote: (event: MouseEvent<SVGAElement, MouseEvent>, post: Post, vote: number, communityId: string) => {}
     onDeletePost: (post: Post) => Promise<boolean>
     onSelectPost?: (post: Post) => void
+    homePage?: boolean
 }
 
-function PostItem({ post, userIsCreator, userVoteValue, onVote, onDeletePost, onSelectPost }: PostItemProps) {
+function PostItem({ post, userIsCreator, userVoteValue, onVote, onDeletePost, onSelectPost, homePage }: PostItemProps) {
     const router = useRouter()
     const [loadingImage, setLoadingImage] = useState(true)
     const [loadingDelete, setLoadingDelete] = useState(false)
@@ -100,6 +102,25 @@ function PostItem({ post, userIsCreator, userVoteValue, onVote, onDeletePost, on
                 <Stack spacing={1} p='10px'>
                     <Stack direction='row' spacing={0.6} align='center' fontSize='9pt'>
                         {/* home page */}
+                        {homePage && (
+                            <>
+                                {post.communityImageUrl ? (
+                                    <Image src={post.communityImageUrl} borderRadius='full' boxSize='18px' mr={2} />
+                                ) : (
+                                    <Icon as={FaReddit} fontSize='18pt' mr={1} color='blue.500' />
+                                )}
+                                <Link href={`r/${post.communityId}`}>
+                                    <Text
+                                        fontWeight={700}
+                                        _hover={{ textDecoration: 'underline' }}
+                                        onClick={event => event.stopPropagation()}
+                                    >
+                                        {`r/${post.communityId}`}
+                                    </Text>
+                                </Link>
+                                <Icon as={BsDot} color='gray.500' fontSize={8} />
+                            </>
+                        )}
                         <Text>
                             Posted by u/{post.creatorDisplayName}
                             {" "}
