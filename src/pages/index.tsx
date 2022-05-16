@@ -13,6 +13,9 @@ import CreatePostLink from '../components/Community/CreatePostLink'
 import { useRecoilValue } from 'recoil'
 import { communityState } from '../atoms/communitiesAtom'
 import useCommunityData from '../hooks/useCommunityData'
+import Recommendations from '../components/Community/Recommendations'
+import PersonalHome from '../components/Community/PersonalHome'
+import Premium from '../components/Community/Premium'
 
 const Home: NextPage = () => {
   const [user, loadingUser] = useAuthState(auth)
@@ -108,6 +111,13 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (user && postStateValue.posts.length) getUserPostVotes()
+
+    return () => {
+      setPostStateValue(prev => ({
+        ...prev,
+        postVotes: []
+      }))
+    }
   }, [user, postStateValue.posts])
 
   return (
@@ -133,9 +143,11 @@ const Home: NextPage = () => {
           </Stack>
         )}
       </>
-      <>
-
-      </>
+      <Stack spacing={5}>
+        <Recommendations />
+        <Premium />
+        <PersonalHome />
+      </Stack>
     </PageContent>
   )
 }
