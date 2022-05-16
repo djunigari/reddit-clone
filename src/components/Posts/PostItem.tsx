@@ -12,7 +12,7 @@ import {
 } from "react-icons/io5";
 import { Alert, AlertIcon, Flex, Icon, Image, Skeleton, Spinner, Stack, Text } from "@chakra-ui/react";
 import moment from "moment";
-import { MouseEvent, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
@@ -21,7 +21,7 @@ interface PostItemProps {
     post: Post
     userIsCreator: boolean
     userVoteValue?: number
-    onVote: (event: MouseEvent<SVGAElement, MouseEvent>, post: Post, vote: number, communityId: string) => {}
+    onVote: (event: React.MouseEvent<SVGElement, MouseEvent>, post: Post, vote: number, communityId: string) => {}
     onDeletePost: (post: Post) => Promise<boolean>
     onSelectPost?: (post: Post) => void
     homePage?: boolean
@@ -34,7 +34,7 @@ function PostItem({ post, userIsCreator, userVoteValue, onVote, onDeletePost, on
     const [error, setError] = useState(false)
     const singlePostPage = !onSelectPost
 
-    const handleDelete = async (event: MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const handleDelete = async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.stopPropagation()
         setLoadingDelete(true)
         try {
@@ -43,14 +43,16 @@ function PostItem({ post, userIsCreator, userVoteValue, onVote, onDeletePost, on
                 throw new Error('Failed to delete post')
             }
             console.log('Post was successfully deleted')
+
+            if (singlePostPage) {
+                router.push(`/r/${post.communityId}`)
+            }
         } catch (error: any) {
             console.log('handleDelete error', error.message)
             setError(error.message)
         }
         setLoadingDelete(false)
-        if (singlePostPage) {
-            router.push(`/r/${post.communityId}`)
-        }
+
     }
 
     return (
