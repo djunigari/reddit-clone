@@ -2138,7 +2138,7 @@
   "resolved" "https://registry.npmjs.org/find-root/-/find-root-1.1.0.tgz"
   "version" "1.1.0"
 
-"firebase-admin@^8.0.0 || ^9.0.0 || ^10.0.0":
+"firebase-admin@^10.2.0", "firebase-admin@^8.0.0 || ^9.0.0 || ^10.0.0":
   "integrity" "sha512-6ehn5J9UEFgi4+naqYvozmGpnZae3cJLdwSkSsDc8/Y0eTBjVMFdf9N2ft7N81UNHA0N5DknOyXhlsdAdyBLCA=="
   "resolved" "https://registry.npmjs.org/firebase-admin/-/firebase-admin-10.2.0.tgz"
   "version" "10.2.0"
